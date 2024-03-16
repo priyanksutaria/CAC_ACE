@@ -5,14 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:replate/screens/home/home_screen.dart';
 
 Future<List<Business>> fetchBusinesses() async {
-  final url = Uri.parse('http://localhost:3000/inventory');
-  print("1");
+  final url = Uri.parse('http://192.168.251.249:3000/inventory');
   final client = http.Client();
-  print("2");
   var response = await client.get(url);
-  print("3");
   if (response.statusCode == 200) {
-    final List<dynamic> jsonData = jsonDecode(response.body);
+    final List<dynamic> jsonData = jsonDecode(response.body)['inventoryItems'];
     return jsonData.map((data) => Business.fromJson(data)).toList();
   } else {
     throw Exception('Failed to load businesses');

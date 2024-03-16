@@ -3,6 +3,8 @@ import 'package:replate/api_services.dart';
 import 'package:replate/screens/home/bottommodal.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:replate/screens/home/inventoryitem.dart';
+import 'package:replate/screens/inventorydetails.dart';
 
 class DashboardScreen extends StatelessWidget {
   List<Business> businesses = [];
@@ -50,7 +52,7 @@ class DashboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Overview of Surplus Food Items',
+                'Stock Available',
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
@@ -91,7 +93,14 @@ class DashboardScreen extends StatelessWidget {
                     } else {
                       final businesses = snapshot
                           .data!; // Access businesses from snapshot.data
+                      // return ListView.builder(
+                      //   itemCount: businesses.length,
+                      //   itemBuilder: (context, index) {
+                      //     return BusinessCard(business: businesses[index]);
+                      //   },
+                      // );
                       return ListView.builder(
+                        scrollDirection: Axis.horizontal,
                         itemCount: businesses.length,
                         itemBuilder: (context, index) {
                           return BusinessCard(business: businesses[index]);
@@ -129,15 +138,42 @@ class FoodItem {
 // business.dart
 // business.dart
 class Business {
-  final String name;
+  final String id;
+  final String businessName;
+  final String email;
   final String location;
+  final String city;
+  final String state;
+  final String pincode;
+  final InventoryItem? inventoryItem;
 
-  Business({required this.name, required this.location});
+  Business({
+    this.inventoryItem,
+    required this.id,
+    required this.businessName,
+    required this.email,
+    required this.location,
+    required this.city,
+    required this.state,
+    required this.pincode,
+  });
 
   factory Business.fromJson(Map<String, dynamic> json) {
+    final List<dynamic> inventoryJson = json['inventoryItems'] ?? [];
+    final List<InventoryItem> inventoryItems = inventoryJson
+        .map((itemJson) => InventoryItem.fromJson(itemJson))
+        .toList();
+
+    final distributor = json['distributor'];
     return Business(
-      name: json['name'],
-      location: json['location'],
+      id: distributor['_id'],
+      businessName: distributor['businessName'],
+      email: distributor['email'],
+      location: distributor['location'],
+      city: distributor['city'],
+      state: distributor['state'],
+      pincode: distributor['pincode'],
+      inventoryItem: InventoryItem.fromJson(json),
     );
   }
 }
@@ -162,47 +198,92 @@ class BusinessCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4.0,
-      margin: EdgeInsets.symmetric(horizontal: 8.0),
-      child: Container(
-        width: 150.0,
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              business.name,
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  InventoryDetailsPage(inventoryItem: business.inventoryItem!),
             ),
-            SizedBox(height: 8.0),
-            Text(
-              business.name,
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.grey,
+          );
+        },
+        child: Container(
+          width: 150.0,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 5.0,
+                spreadRadius: 2.0,
               ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 120.0,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(10.0)),
+                    image: DecorationImage(
+                      image: AssetImage(
+                          "assets/Backgrounds/company.jpg"), // Display food item's image
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Text(
+                  business.businessName, // Display food item's name
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 8.0), // Adjust spacing as needed
+                Text(
+                  'Email: ${business.email}', // Add location information
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(height: 4.0),
+                Text(
+                  'Location: ${business.location}', // Add location information
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(height: 4.0),
+                Text(
+                  'City: ${business.city}', // Add location information
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(height: 4.0),
+                Text(
+                  'State: ${business.state}', // Add location information
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 4.0), // Adjust spacing as needed
-            Text(
-              'Name: ${business.name}',
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              'Location: ${business.location}', // Add location information
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.grey,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
