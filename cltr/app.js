@@ -4,6 +4,7 @@ const app = express();
 const { DistributorDetails, InventoryItem } = require('./models/Giver');
 const bodyParser = require('body-parser');
 const { TakerDetails, TakerReqDetails } = require('./models/Taker');
+const Volunteer = require('./models/volunteer');
 
 // Parse JSON bodies for this app
 app.use(bodyParser.json());
@@ -21,6 +22,7 @@ connectToDatabase().then(() => {
   console.log(`Connected to DB`);
 });
 
+//ADDITION OF GIVER DETAILS AND INVENTROY
 app.post('/giverDetails', async (req, res) => {
   try {
     const { email, businessName, location, city, state, pincode, role } =
@@ -98,50 +100,7 @@ app.post('/inventoryAddition', async (req, res) => {
   }
 });
 
-// async function findid(email) {
-//   try {
-//     const user = await DistributorDetails.findOne({ email });
-//     if (user) {
-//       return user._id;
-//     } else {
-//       console.log('Email not found.');
-//       return null;
-//     }
-//   } catch (error) {
-//     console.error('Error finding email:', error);
-//     return null;
-//   }
-// }
-
-// async function insertDummyData() {
-//   try {
-//     const email = '2@gmail.com';
-//     const distributorId = await findid(email);
-//     if (distributorId) {
-//       const inventoryData = [
-//         {
-//           name: 'Item 9`',
-//           quantity: 1000,
-//           expiryDate: new Date('2023-12-31'),
-//           distributor: distributorId,
-//         },
-//       ];
-//       await InventoryItem.insertMany(inventoryData);
-//       console.log('Dummy data inserted successfully.');
-//     } else {
-//       console.log('Distributor ID not found.');
-//     }
-//   } catch (error) {
-//     console.error('Error inserting dummy data:', error);
-//   } finally {
-//     mongoose.connection.close();
-//   }
-// }
-
-// insertDummyData();
-
-//
-
+//ADDITION OF TAKERDETAILS
 app.post('/takerDetails', async (req, res) => {
   try {
     const { takerName, email, location, city, state, pincode } = req.body;
@@ -163,6 +122,47 @@ app.post('/takerDetails', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error saving Taker data.');
+  }
+});
+
+app.post('/takerReq', async (req, res) => {
+  try {
+    const { takerEmail, inventoryId } = req.body;
+
+    const taker = new TakerReqDetails({
+      takerEmail,
+      inventoryId,
+    });
+    await taker.save();
+
+    res.status(200).send('Taker Req saved successfully.');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error saving Taker data.');
+  }
+});
+
+//GETTIN REQ
+
+app.get('/inventory', async (req, res) => {
+  try {
+    const inventoryItems = await InventoryItem.find().populate('distributor');
+
+    res.json({ inventoryItems });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/volunteer', async (req, res) => {
+  try {
+    const inventoryItems = await Volunteer.find();
+
+    res.json({ inventoryItems });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

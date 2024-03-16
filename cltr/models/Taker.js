@@ -37,12 +37,11 @@ const TakerSchema = mongoose.Schema(
 
 const TakerReqSchema = mongoose.Schema(
   {
-    takerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'TakerDetails',
+    takerEmail: {
+      type: String,
       required: true,
     },
-    inventory_id: {
+    inventoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'InventoryItem',
       required: true,
