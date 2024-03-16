@@ -1,0 +1,38 @@
+[{
+  "_id": {
+    "$oid": "65f5617f406e97a5bf0395f9"
+  },
+  "businessName": "Distributor 1",
+  "email": "Harsh@example.com",
+  "location": "Location 1",
+  "city": "City 1",
+  "state": "State 1",
+  "pincode": "123456",
+  "role": "business",
+  "createdAt": {
+    "$date": "2024-03-16T09:08:15.945Z"
+  },
+  "updatedAt": {
+    "$date": "2024-03-16T09:08:15.945Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "65f56192406e97a5bf0395fb"
+  },
+  "businessName": "Distributor 1",
+  "email": "sneh@example.com",
+  "location": "Location 1",
+  "city": "City 1",
+  "state": "State 1",
+  "pincode": "123456",
+  "role": "business",
+  "createdAt": {
+    "$date": "2024-03-16T09:08:34.254Z"
+  },
+  "updatedAt": {
+    "$date": "2024-03-16T09:08:34.254Z"
+  },
+  "__v": 0
+}]

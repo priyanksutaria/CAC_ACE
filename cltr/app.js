@@ -5,13 +5,17 @@ const { DistributorDetails, InventoryItem } = require('./models/Giver');
 const bodyParser = require('body-parser');
 const { TakerDetails, TakerReqDetails } = require('./models/Taker');
 const Volunteer = require('./models/volunteer');
+const cors = require('cors');
 
 // Parse JSON bodies for this app
 app.use(bodyParser.json());
+app.use(cors());
 
 async function connectToDatabase() {
   try {
-    await mongoose.connect('mongodb://localhost:27017/Hackathon');
+    await mongoose.connect(
+      'mongodb+srv://snehd:snehd@cluster0.amultfg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/Hackathon'
+    );
     console.log('Connected to database');
   } catch (error) {
     console.error('Error connecting to database:', error);
@@ -159,7 +163,7 @@ app.get('/volunteer', async (req, res) => {
   try {
     const inventoryItems = await Volunteer.find();
 
-    res.json({ inventoryItems });
+    res.json(inventoryItems);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

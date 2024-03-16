@@ -1,0 +1,42 @@
+[{
+  "_id": {
+    "$oid": "65f561c2406e97a5bf0395fe"
+  },
+  "name": "Product Name",
+  "quantity": 10,
+  "expiryDate": {
+    "$date": "2024-12-31T00:00:00.000Z"
+  },
+  "distributor": {
+    "$oid": "65f5617f406e97a5bf0395f9"
+  },
+  "available": "true",
+  "createdAt": {
+    "$date": "2024-03-16T09:09:22.733Z"
+  },
+  "updatedAt": {
+    "$date": "2024-03-16T09:09:22.733Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "65f561ce406e97a5bf039601"
+  },
+  "name": "Prosodivneo Name",
+  "quantity": 1000000,
+  "expiryDate": {
+    "$date": "2024-12-31T00:00:00.000Z"
+  },
+  "distributor": {
+    "$oid": "65f56192406e97a5bf0395fb"
+  },
+  "available": "true",
+  "createdAt": {
+    "$date": "2024-03-16T09:09:34.219Z"
+  },
+  "updatedAt": {
+    "$date": "2024-03-16T09:09:34.219Z"
+  },
+  "__v": 0
+}]
