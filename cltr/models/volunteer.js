@@ -52,7 +52,20 @@ const volunteerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const pointerSchema = new mongoose.Schema({
+  VolunteerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Volunteer',
+    required: true,
+  },
+  points: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+});
+
 // Create the Volunteer model
 const Volunteer = mongoose.model('Volunteer', volunteerSchema);
-
-module.exports = Volunteer;
+const pointer = mongoose.model('pointsVolunteer', pointerSchema);
+module.exports = { Volunteer, pointer };

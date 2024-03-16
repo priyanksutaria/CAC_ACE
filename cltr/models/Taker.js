@@ -37,6 +37,10 @@ const TakerSchema = mongoose.Schema(
 
 const TakerReqSchema = mongoose.Schema(
   {
+    reqQuantity: {
+      type: Number,
+      require: true,
+    },
     takerEmail: {
       type: String,
       required: true,

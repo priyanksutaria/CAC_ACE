@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const { TakerDetails, TakerReqDetails } = require('./models/Taker');
 const Volunteer = require('./models/volunteer');
 const cors = require('cors');
+const { ObjectId } = require('mongodb');
 
 // Parse JSON bodies for this app
 app.use(bodyParser.json());
@@ -129,20 +130,112 @@ app.post('/takerDetails', async (req, res) => {
   }
 });
 
+// app.post('/takerReq', async (req, res) => {
+//   try {
+//     const { reqQuantity, takerEmail, inventoryId } = req.body;
+
+//     const update = async (_id) => {
+//       const inventoryItem = await InventoryItem.findById(_id);
+//       const preQuantity = inventoryItem.quantity;
+
+//       let newQuantity = preQuantity - reqQuantity;
+//       //let newAvailable = inventoryItem.available;
+
+//       if (newQuantity <= 0) {
+//         newQuantity = 0;
+//         newAvailable = 'false';
+//         const result = await InventoryItem.findByIdAndUpdate(
+//           _id,
+//           {
+//             $set: {
+//               quantity: newQuantity,
+//               available: 'false',
+//             },
+//           }
+//           //{ new: true }
+//         );
+//       } else {
+//         const result = await InventoryItem.findByIdAndUpdate(
+//           _id,
+//           {
+//             $set: {
+//               quantity: newQuantity,
+//               available: newAvailable,
+//             },
+//           }
+//           // { new: true }
+//         );
+//       }
+//     };
+
+//     await update(inventoryId);
+
+//     const taker = new TakerReqDetails({
+//       reqQuantity,
+//       takerEmail,
+//       inventoryId,
+//     });
+//     await taker.save();
+
+//     res
+//       .status(200)
+//       .send('Taker request saved successfully. Inventory updated.');
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Error saving taker request.');
+//   }
+// });
+
 app.post('/takerReq', async (req, res) => {
   try {
-    const { takerEmail, inventoryId } = req.body;
+    const { reqQuantity, takerEmail, inventoryId } = req.body;
+
+    const update = async (_id) => {
+      const inventoryItem = await InventoryItem.findById(_id);
+      const preQuantity = inventoryItem.quantity;
+
+      let newQuantity = preQuantity - reqQuantity;
+
+      if (newQuantity < 0) {
+        // Delete the inventory item if the new quantity is less than zero
+        await InventoryItem.findByIdAndDelete(_id);
+        console.log('Inventory item deleted due to insufficient quantity');
+        return;
+      }
+
+      let newAvailable = inventoryItem.available;
+
+      if (newQuantity === 0) {
+        newAvailable = 'false';
+      }
+
+      const result = await InventoryItem.findByIdAndUpdate(
+        _id,
+        {
+          $set: {
+            quantity: newQuantity,
+            available: newAvailable,
+          },
+        },
+        { new: true }
+      );
+    };
+
+    await update(inventoryId);
 
     const taker = new TakerReqDetails({
+      reqQuantity,
       takerEmail,
       inventoryId,
     });
     await taker.save();
 
-    res.status(200).send('Taker Req saved successfully.');
+    res
+      .status(200)
+      .send('Taker request saved successfully. Inventory updated.');
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error saving Taker data.');
+    res.status(500).send('Error saving taker request.');
   }
 });
 
@@ -170,6 +263,6 @@ app.get('/volunteer', async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
+app.listen(4000, () => {
   console.log(`Server Started`);
 });
