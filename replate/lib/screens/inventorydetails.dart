@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:replate/screens/entryPoint/entry_point.dart';
 import 'package:replate/screens/home/home_screen.dart';
 import 'package:replate/screens/home/inventoryitem.dart';
 import 'package:intl/intl.dart';
@@ -181,12 +182,11 @@ class _InventoryDetailsPageState extends State<InventoryDetailsPage> {
                     ElevatedButton(
                       onPressed: () {
                         requestQuantity();
-                        handleRequestMade(requestedFoodItem);
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  DashboardScreen()), // Replace DashboardScreen with your dashboard screen
+                                  EntryPoint()), // Replace DashboardScreen with your dashboard screen
                           (route) => false,
                         );
                       },

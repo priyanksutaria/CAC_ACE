@@ -25,7 +25,7 @@ class BtmNavItem extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => LeaderboardScreen()),
+          MaterialPageRoute(builder: (context) => LeaderboardPage()),
         );
       },
       child: Column(
