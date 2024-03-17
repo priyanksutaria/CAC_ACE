@@ -147,8 +147,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomRight,
             colors: [
-              Color.fromARGB(255, 149, 40, 40),
-              Color.fromARGB(255, 71, 48, 155)
+              Color.fromARGB(255, 255, 255, 255),
+              Color.fromARGB(255, 118, 188, 135)
             ],
           ),
         ),

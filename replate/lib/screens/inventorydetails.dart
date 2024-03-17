@@ -71,7 +71,7 @@ class _InventoryDetailsPageState extends State<InventoryDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Inventory Details'),
-        backgroundColor: Colors.green,
+        backgroundColor: Color.fromARGB(255, 66, 188, 108),
       ),
       body: Container(
         width: 1000,
@@ -80,6 +80,7 @@ class _InventoryDetailsPageState extends State<InventoryDetailsPage> {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Card(
+              color: Color.fromARGB(255, 201, 229, 204),
               elevation: 4.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
@@ -190,7 +191,10 @@ class _InventoryDetailsPageState extends State<InventoryDetailsPage> {
                           (route) => false,
                         );
                       },
-                      child: Text('Request'),
+                      child: Text(
+                        'Request',
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
                   ],
                 ),
