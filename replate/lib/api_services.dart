@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:replate/screens/home/home_screen.dart';
 
 Future<List<Business>> fetchBusinesses() async {
-  final url = Uri.parse('http://192.168.251.249:3000/inventory');
+  final url = Uri.parse('http://192.168.251.224:4000/inventory');
   final client = http.Client();
   var response = await client.get(url);
   if (response.statusCode == 200) {

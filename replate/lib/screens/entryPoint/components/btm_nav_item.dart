@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:replate/screens/home/home_screen.dart';
+import 'package:replate/screens/leaderboard.dart';
 import 'package:rive/rive.dart';
 
 import '../../../model/menu.dart';
@@ -20,7 +22,12 @@ class BtmNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: press,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LeaderboardScreen()),
+        );
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

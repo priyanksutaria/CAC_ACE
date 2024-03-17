@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:replate/screens/entryPoint/entry_point.dart';
 
 import '../../../model/menu.dart';
 import '../../../utils/rive_utils.dart';
@@ -32,8 +33,8 @@ class _SideBarState extends State<SideBar> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const InfoCard(
-                name: "Priyank Sutaria",
-                bio: "Staff",
+                name: "Food for the Hungry",
+                bio: "NGO",
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 24, top: 32, bottom: 16),
@@ -51,6 +52,13 @@ class _SideBarState extends State<SideBar> {
                         selectedMenu: selectedSideMenu,
                         press: () {
                           RiveUtils.chnageSMIBoolState(menu.rive.status!);
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EntryPoint()), // Replace DashboardScreen with your dashboard screen
+                            (route) => false,
+                          );
                           setState(() {
                             selectedSideMenu = menu;
                           });

@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:replate/screens/home/home_screen.dart';
+
 import 'rive_model.dart';
 
 class Menu {
@@ -34,15 +37,17 @@ List<Menu> bottomNavItems = [
   Menu(
     title: "Home",
     rive: RiveModel(
-        src: "assets/RiveAssets/house.riv",
-        artboard: "Home",
-        stateMachineName: "Home_interctivity"),
+      src: "assets/RiveAssets/icons.riv",
+      artboard: "HOME",
+      stateMachineName: "HOME_Interctivity",
+    ),
   ),
   Menu(
     title: "Profile",
     rive: RiveModel(
-        src: "assets/RiveAssets/icons.riv",
-        artboard: "USER",
-        stateMachineName: "USER_Interactivity"),
+      src: "assets/RiveAssets/icons.riv",
+      artboard: "USER",
+      stateMachineName: "USER_Interctivity",
+    ),
   ),
 ];

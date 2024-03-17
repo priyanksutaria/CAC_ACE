@@ -1,12 +1,21 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:replate/api_services.dart';
+import 'package:replate/screens/feedback.dart';
 import 'package:replate/screens/home/bottommodal.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:replate/screens/home/inventoryitem.dart';
 import 'package:replate/screens/inventorydetails.dart';
+import 'package:feedback/feedback.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
   List<Business> businesses = [];
 
   final List<FoodItem> foodItems = [
@@ -26,12 +35,109 @@ class DashboardScreen extends StatelessWidget {
         quantity: 300,
         expiryDate: '2024-03-19'),
   ];
+  void showFeedbackDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.pop(context); // Dismiss dialog when tapping outside
+          },
+          child: Stack(
+            children: [
+              // Blurred background
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    color: Colors.transparent,
+                  ),
+                ),
+              ),
+              // AlertDialog
+              AlertDialog(
+                title: Text(
+                  'Feedback',
+                  style: TextStyle(
+                      color: Colors.blue, fontWeight: FontWeight.bold),
+                ),
+                backgroundColor:
+                    Colors.transparent, // Set background color to transparent
+                content: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white, // Set dialog container color
+                    borderRadius:
+                        BorderRadius.circular(20), // Add border radius
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Text(
+                            'We would love to hear your feedback! Please share your thoughts with us.',
+                            style: TextStyle(color: Colors.black, fontSize: 16),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: TextField(
+                            maxLines: 5,
+                            decoration: InputDecoration(
+                              hintText: 'Enter your feedback here',
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Handle feedback submission
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                          child: Text('Submit',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: Container(
+          alignment: Alignment.center,
+          child: Text('Dashboard'),
+        ),
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -103,16 +209,22 @@ class DashboardScreen extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: businesses.length,
                         itemBuilder: (context, index) {
-                          return BusinessCard(business: businesses[index]);
+                          return BusinessCard(
+                              foodItems: foodItems,
+                              business: businesses[index]);
                         },
                       );
-                      return Container();
                     }
                   },
                 ),
               ),
               SizedBox(height: 20.0),
-              // Other widgets...
+              FloatingActionButton(
+                onPressed: () {
+                  showFeedbackDialog(context);
+                },
+                child: Icon(Icons.feedback),
+              ),
             ],
           ),
         ),
@@ -192,9 +304,10 @@ class AvailFoodItem {
 }
 
 class BusinessCard extends StatelessWidget {
+  final List<FoodItem> foodItems;
   final Business business;
 
-  BusinessCard({required this.business});
+  BusinessCard({required this.business, required this.foodItems});
 
   @override
   Widget build(BuildContext context) {
@@ -205,8 +318,8 @@ class BusinessCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  InventoryDetailsPage(inventoryItem: business.inventoryItem!),
+              builder: (context) => InventoryDetailsPage(
+                  foodItems: foodItems, inventoryItem: business.inventoryItem!),
             ),
           );
         },

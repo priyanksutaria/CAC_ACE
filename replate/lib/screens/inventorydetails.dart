@@ -1,29 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:replate/screens/home/home_screen.dart';
 import 'package:replate/screens/home/inventoryitem.dart';
+import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class InventoryDetailsPage extends StatefulWidget {
+  final List<FoodItem> foodItems;
   final InventoryItem inventoryItem;
 
-  InventoryDetailsPage({required this.inventoryItem});
+  InventoryDetailsPage({required this.foodItems, required this.inventoryItem});
 
   @override
   _InventoryDetailsPageState createState() => _InventoryDetailsPageState();
 }
 
 class _InventoryDetailsPageState extends State<InventoryDetailsPage> {
+  late String itemName;
+  late String expdate;
   late int requestedQuantity = 0;
 
   Future<void> requestQuantity() async {
-    final url = Uri.parse('http://192.168.251.249:3000/takerReq');
+    final url = Uri.parse('http://192.168.251.224:4000/takerReq');
     final response = await http.post(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'reqQuantity': 70,
+        'reqQuantity': requestedQuantity,
         'takerEmail': "priyanksutaria16@gmail.com",
         'inventoryId': widget.inventoryItem.id,
       }),
@@ -38,8 +43,30 @@ class _InventoryDetailsPageState extends State<InventoryDetailsPage> {
     }
   }
 
+  void handleRequestMade(FoodItem requestedFoodItem) {
+    setState(() {
+      // Add the requested food item to the list of food items
+      widget.foodItems.add(requestedFoodItem);
+    });
+  }
+
+  void initState() {
+    super.initState();
+    // Initialize the item name variable with the initial value
+    itemName = widget.inventoryItem.name;
+    expdate =
+        '${widget.inventoryItem.expiryDate.day}-${widget.inventoryItem.expiryDate.month}-${widget.inventoryItem.expiryDate.year}';
+  }
+
   @override
   Widget build(BuildContext context) {
+    FoodItem requestedFoodItem = FoodItem(
+      name: itemName, // Replace with the actual name of the requested food item
+      image:
+          'assets/Backgrounds/food.jpg', // Replace with the actual image path
+      quantity: requestedQuantity, // Replace with the actual quantity
+      expiryDate: expdate, // Replace with the actual expiry date
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text('Inventory Details'),
@@ -113,8 +140,7 @@ class _InventoryDetailsPageState extends State<InventoryDetailsPage> {
                         ),
                         SizedBox(width: 8.0),
                         Text(
-                          "hello",
-                          // '${widget.inventoryItem.expiryDate}',
+                          '${widget.inventoryItem.expiryDate.day}-${widget.inventoryItem.expiryDate.month}-${widget.inventoryItem.expiryDate.year}',
                           style: TextStyle(
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold,
@@ -155,6 +181,14 @@ class _InventoryDetailsPageState extends State<InventoryDetailsPage> {
                     ElevatedButton(
                       onPressed: () {
                         requestQuantity();
+                        handleRequestMade(requestedFoodItem);
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DashboardScreen()), // Replace DashboardScreen with your dashboard screen
+                          (route) => false,
+                        );
                       },
                       child: Text('Request'),
                     ),
