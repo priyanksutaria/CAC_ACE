@@ -3,10 +3,12 @@ import './CardDetails.css';
 import axios from 'axios'; // Import axios for making HTTP requests
 
 const CardDetails = ({ details }) => {
+  console.log(details);
   const handleUpdatePoints = async () => {
     try {
+      console.log(details._id);
       const response = await axios.post('http://localhost:4000/pointers', {
-        volunteerId: details.volunteerId, // Assuming volunteerId is included in details
+        volunteerId: details._id, // Assuming volunteerId is included in details
         points: 10, // You can adjust the points as needed
       });
       console.log(response.data); // Log the response from the API
@@ -31,11 +33,23 @@ const CardDetails = ({ details }) => {
         <p className='card-text'>Phone Number: {details.phoneNumber}</p>
         <p className='card-text'>Availability: {details.availability}</p>
         <p className='card-text'>Skills: {details.skills}</p>
-        <p className='card-text'>Interests: {details.interests}</p>
+
         <p className='card-text'>
           Availability Notes: {details.availabilityNotes}
         </p>
-        <button onClick={handleUpdatePoints}>Update Points</button>
+        <button
+          onClick={handleUpdatePoints}
+          style={{
+            backgroundColor: 'blue',
+            color: 'white',
+            border: 'none',
+            padding: '10px 20px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          Give Credits For Completing Task
+        </button>
       </div>
     </div>
   );
