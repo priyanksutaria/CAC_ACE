@@ -252,7 +252,7 @@ app.post('/takerReq', async (req, res) => {
 
       let newQuantity = preQuantity - reqQuantity;
 
-      if (newQuantity < 0) {
+      if (newQuantity <= 0) {
         // Delete the inventory item if the new quantity is less than zero
         await InventoryItem.findByIdAndDelete(_id);
         console.log('Inventory item deleted due to insufficient quantity');
@@ -344,6 +344,18 @@ app.get('/volunteer', async (req, res) => {
     const inventoryItems = await Volunteer.find();
 
     res.json(inventoryItems);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/leaderboard', async (req, res) => {
+  try {
+    const leaderboard = await pointer.find().populate('volunteerId');
+    const sortedInventory = leaderboard.sort((a, b) => b.points - a.points);
+
+    res.json(sortedInventory);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

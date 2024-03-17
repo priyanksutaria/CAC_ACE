@@ -1,48 +1,91 @@
-import React from 'react'
-import Layout from '../../components/Layout/Layout'
-import { Box, Flex, Heading, Text } from '@chakra-ui/react'
-import { FiAlertCircle, FiBox, FiPackage } from 'react-icons/fi'
-import InspectionDetails from './InspectionDetails'
+import React, { useState } from 'react';
+import axios from 'axios';
+import styled from 'styled-components';
+import Layout from '../../components/Layout/Layout';
+import ReportsDetails from './ReportsDetails';
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+`;
+
+const Label = styled.label`
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+`;
+
+const Input = styled.input`
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const Button = styled.button`
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0069d9;
+  }
+`;
+
+const InventoryList = styled.pre`
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow-x: auto;
+`;
 
 const Reports = () => {
-    const inspections = [
-        { VolunteerId: 1, inspectionDate: '2024-03-01', VolunteerName: 'John Doe', ItemNumber: '101', Status: 'Delivered', timeTaken: '60' },
-        { VolunteerId: 2, inspectionDate: '2024-03-02', VolunteerName: 'Jane Smith', ItemNumber: '102', Status: 'Not Delivered', timeTaken: '45' },
-        { VolunteerId: 3, inspectionDate: '2024-03-03', VolunteerName: 'Mike Johnson', ItemNumber: '103', Status: 'Delivered', timeTaken: '90' },
-        { VolunteerId: 4, inspectionDate: '2024-03-04', VolunteerName: 'Emily Brown', ItemNumber: '104', Status: 'Not Delivered', timeTaken: '60' },
-        { VolunteerId: 5, inspectionDate: '2024-03-05', VolunteerName: 'Alex Clark', ItemNumber: '105', Status: 'Delivered', timeTaken: '120' },
-      ];
+  const [email, setEmail] = useState('');
+  const [inventory, setInventory] = useState(null);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.get(`http://localhost:4000/inventory`);
+      const inventoryItems = response.data.inventoryItems.filter(
+        (item) => item.distributor.email === email
+      );
+      setInventory(inventoryItems);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Layout>
-        <Heading>Report</Heading>
-        <Text>Date Range</Text>
-        <Flex justifyContent="space-between">
-          {/* Total FOODITEM DELIVERED */}
-          <Box p={4} bg="white" boxShadow="md" borderRadius="md">
-            <Flex alignItems="center">
-              <FiBox size={24} color="blue" />
-              <Text ml={2}>Total FOOD ITEM DELIVERED: 100</Text>
-            </Flex>
-          </Box>
-          {/* Total FOOD ITEM NOT DELIVERED */}
-          <Box p={4} bg="white" boxShadow="md" borderRadius="md">
-            <Flex alignItems="center">
-              <FiAlertCircle size={24} color="red" />
-              <Text ml={2}>Total FOOD ITEM NOT DELIVERED: 5</Text>
-            </Flex>
-          </Box>
-          {/* Total FOOD ITEM PENDING */}
-          <Box p={4} bg="white" boxShadow="md" borderRadius="md">
-            <Flex alignItems="center">
-              <FiPackage size={24} color="orange" />
-              <Text ml={2}>Total FOOD ITEM PENDING: 10</Text>
-            </Flex>
-          </Box>
-        </Flex>
-        <br></br>
-        <InspectionDetails inspections={inspections} />
-    </Layout>
-  )
-}
+      <Form onSubmit={handleSubmit}>
+        <Label htmlFor='email'>Email:</Label>
+        <Input
+          type='email'
+          id='email'
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+        <Button type='submit'>Get Inventory</Button>
+      </Form>
 
-export default Reports
+      <div className='container'>
+        <div className='card-container'>
+          {inventory &&
+            inventory.map((item) => (
+              <ReportsDetails key={item._id} details={item} />
+            ))}
+        </div>
+      </div>
+    </Layout>
+  );
+};
+
+export default Reports;

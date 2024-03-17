@@ -9,20 +9,18 @@ import Reports from './layout/Reports/Reports';
 import AdminDashboard from './layout/AdminDashboard/AdminDashboard';
 import Json from './timepass';
 
-
-
 function App() {
   return (
     <>
       <Routes>
-        <Route path='/' element={<Inventory/>} />
+        <Route path='/' element={<Inventory />} />
         <Route path='/Volunteer' element={<Volunteer />} />
         <Route path='/reports' element={<Reports />} />
         <Route path='/dashboard' element={<AdminDashboard />} />
-      <Route path="/json" element={<Json/>} />
+        <Route path='/json' element={<Json />} />
       </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,29 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
+import CardDetails from './layout/CardDeatils';
 function Json() {
-  const [volunteers, setVolunteers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchVolunteers = async () => {
+    const fetchData = async () => {
+      setIsLoading(true);
       try {
-        const response = await fetch(
-          'http://localhost:3000/volunteer'
-        );
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        // const data = await response.json();
-        setVolunteers(response.body);
+        const response = await axios.get('http://localhost:4000/volunteer');
+        setData(response.data);
       } catch (error) {
         setError(error);
-      } finally {
-        setIsLoading(false);
       }
+      setIsLoading(false);
     };
 
-    fetchVolunteers();
+    fetchData();
   }, []);
 
   if (isLoading) {
@@ -34,12 +30,19 @@ function Json() {
     return <div>Error: {error.message}</div>;
   }
 
+  if (!data) {
+    return <div>No data available</div>;
+  }
+
   return (
-    <div>
-      <h1>Volunteer List</h1>
-      <h1>{volunteers}</h1>
+    <div className='container'>
+      <div className='card-container'>
+        {data.map((item) => (
+          <CardDetails key={item._id} details={item} />
+        ))}
+      </div>
     </div>
   );
 }
 
-export default Json;
+export default Json;
