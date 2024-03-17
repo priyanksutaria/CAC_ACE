@@ -1,7 +1,22 @@
 import React from 'react';
 import './CardDetails.css';
+import axios from 'axios'; // Import axios for making HTTP requests
 
 const CardDetails = ({ details }) => {
+  const handleUpdatePoints = async () => {
+    try {
+      const response = await axios.post('http://localhost:4000/pointers', {
+        volunteerId: details.volunteerId, // Assuming volunteerId is included in details
+        points: 10, // You can adjust the points as needed
+      });
+      console.log(response.data); // Log the response from the API
+      // You can also update the UI or show a success message here if needed
+    } catch (error) {
+      console.error('Error updating points:', error);
+      // Handle error, show error message, etc.
+    }
+  };
+
   return (
     <div className='card'>
       <div className='card-body'>
@@ -20,6 +35,7 @@ const CardDetails = ({ details }) => {
         <p className='card-text'>
           Availability Notes: {details.availabilityNotes}
         </p>
+        <button onClick={handleUpdatePoints}>Update Points</button>
       </div>
     </div>
   );
