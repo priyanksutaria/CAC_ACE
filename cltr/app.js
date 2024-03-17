@@ -4,7 +4,7 @@ const app = express();
 const { DistributorDetails, InventoryItem } = require('./models/Giver');
 const bodyParser = require('body-parser');
 const { TakerDetails, TakerReqDetails } = require('./models/Taker');
-const Volunteer = require('./models/volunteer');
+const { Volunteer, pointer } = require('./models/volunteer');
 const cors = require('cors');
 const { ObjectId } = require('mongodb');
 
@@ -186,6 +186,62 @@ app.post('/takerDetails', async (req, res) => {
 //   }
 // });
 
+app.post('/volunteerAddition', async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      age,
+      gender,
+      address,
+      city,
+      state,
+      zipCode,
+      phoneNumber,
+      availability,
+      skills,
+      interest,
+      availabilityNotes,
+    } = req.body;
+
+    // Create an instance of the Distributor model
+    const volunteer = new Volunteer({
+      name,
+      email,
+      age,
+      gender,
+      address,
+      city,
+      state,
+      zipCode,
+      phoneNumber,
+      availability,
+      skills,
+      interest,
+      availabilityNotes,
+    });
+
+    // Save the distributor data to the database
+    await volunteer.save();
+    const user = await Volunteer.findOne({ email });
+    if (user) {
+      const id = user._id;
+      const volunteerleader = new pointer({
+        volunteerId: id, // Set volunteerId to the _id of the saved Volunteer document
+        points: 0,
+      });
+      // Save the volunteerleader document to the database
+      await volunteerleader.save();
+    } else {
+      console.log('No volunteer found with the given email');
+    }
+    console.log(user);
+    res.status(200).send('Taker data saved successfully.');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error saving Taker data.');
+  }
+});
 app.post('/takerReq', async (req, res) => {
   try {
     const { reqQuantity, takerEmail, inventoryId } = req.body;
@@ -236,6 +292,37 @@ app.post('/takerReq', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error saving taker request.');
+  }
+});
+
+app.post('/pointers', async (req, res) => {
+  try {
+    // Destructure data from the request body
+    const { volunteerId, points } = req.body;
+
+    // Find the volunteer document using the volunteerId
+    const user = await pointer.findOne({ volunteerId });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Volunteer not found' });
+    }
+
+    const newPoints = user.points + points;
+
+    // Update the existing Pointers document
+    const updatedPointer = await pointer.findOneAndUpdate(
+      { volunteerId },
+      { $set: { points: newPoints } },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: 'Pointers updated successfully',
+      pointer: updatedPointer,
+    });
+  } catch (error) {
+    console.error('Error updating pointers:', error);
+    res.status(500).json({ error: 'Error updating pointers' });
   }
 });
 

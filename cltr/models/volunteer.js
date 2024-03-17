@@ -53,7 +53,7 @@ const volunteerSchema = new mongoose.Schema(
 );
 
 const pointerSchema = new mongoose.Schema({
-  VolunteerId: {
+  volunteerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Volunteer',
     required: true,
